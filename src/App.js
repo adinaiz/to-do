@@ -1,23 +1,30 @@
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
 import './App.css';
+import AddToDo from './components/Users/AddToDo';
+import ToDos from './components/Users/ToDos';
 
 function App() {
+  const [info, setInfo] = useState([])
+  const  addUserHandler = (info) => {
+    setInfo((prevState) => [info, ...prevState]);
+  };
+
+ //poluchaet iz localStorage dannye s pomow'yu useEffect() s obnovlennymi dannymi
+  //rabotaet odin raz posle ocenki i rendera
+  useEffect (() => {
+    const raw = localStorage.getItem('info') || []
+    setInfo(JSON.parse(raw))
+  }, []) 
+
+  //otpravlyaet dannye v localStorage
+  useEffect(() => {
+    localStorage.setItem('info', JSON.stringify(info)) //srabotaet pri izmenenii
+  }, [info]) 
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AddToDo onAddUser={addUserHandler}/>
+      <ToDos info={info} onChangeData={setInfo}/>
     </div>
   );
 }
